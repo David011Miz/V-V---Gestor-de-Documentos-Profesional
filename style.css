@@ -1,0 +1,657 @@
+/* --- Variables CSS Globales (opcional, pero recomendado) --- */
+:root {
+    --primary-color: #4CAF50; /* Verde vibrante */
+    --secondary-color: #2196F3; /* Azul vibrante */
+    --text-color-light: #f4f4f4;
+    --background-dark: #1a1a2e; /* Fondo oscuro base */
+    --card-background: rgba(255, 255, 255, 0.1); /* Fondo de tarjeta semitransparente */
+    --border-radius-main: 15px;
+    --transition-speed: 0.3s;
+    --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-dark); /* Fondo oscuro para el cuerpo */
+    color: var(--text-color-light);
+    overflow: hidden; /* Para que las animaciones de fondo no causen scroll */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* --- TOASTS --- */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column-reverse; /* Para que los nuevos aparezcan arriba */
+    gap: 10px; /* Espacio entre los toasts */
+}
+
+.toast {
+    background-color: rgba(44, 62, 80, 0.9);
+    color: white;
+    padding: 12px 20px;
+    border-radius: var(--border-radius-main);
+    box-shadow: var(--shadow-light);
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre el icono y el texto */
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast-success { background-color: rgba(76, 175, 80, 0.9); }
+.toast-danger { background-color: rgba(244, 67, 54, 0.9); }
+.toast-info { background-color: rgba(33, 150, 243, 0.9); }
+.toast-warning { background-color: rgba(255, 152, 0, 0.9); }
+
+.toast i {
+    font-size: 1.2em; /* Tamaño relativo para los iconos */
+}
+
+/* --- PANTALLA DE LOGIN --- */
+.login-screen {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Asegura que las animaciones de fondo no salgan */
+    background: radial-gradient(circle at 10% 20%, #1a1a2e, #0a0a1a); /* Base oscura */
+    transition: opacity 0.5s ease-out;
+}
+
+/* Animación de fondo "Aurora" */
+.login-screen::before,
+.login-screen::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px); /* Gran desenfoque para el efecto de luz */
+    opacity: 0.6; /* Semitransparente */
+    animation: aurora-move 15s infinite alternate ease-in-out;
+    z-index: 0; /* Asegura que esté detrás del contenido */
+}
+
+.login-screen::before {
+    width: 60vw;
+    height: 60vw;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.6), rgba(33, 150, 243, 0.6));
+    top: -20%;
+    left: -20%;
+    animation-delay: 0s;
+}
+
+.login-screen::after {
+    width: 70vw;
+    height: 70vw;
+    background: linear-gradient(45deg, rgba(33, 150, 243, 0.6), rgba(255, 152, 0, 0.6));
+    bottom: -30%;
+    right: -30%;
+    animation-delay: 7.5s; /* Desfase para que las animaciones no estén sincronizadas */
+}
+
+@keyframes aurora-move {
+    0% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(20%, 10%) scale(1.05); }
+    50% { transform: translate(0, 20%) scale(0.95); }
+    75% { transform: translate(-20%, 10%) scale(1.1); }
+    100% { transform: translate(0, 0) scale(1); }
+}
+
+.login-box {
+    background: rgba(255, 255, 255, 0.1); /* Más transparencia */
+    border-radius: var(--border-radius-main);
+    padding: 40px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* Sombra de glassmorphism */
+    backdrop-filter: blur(10px); /* Efecto de desenfoque de vidrio */
+    -webkit-backdrop-filter: blur(10px); /* Para compatibilidad con Safari */
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    text-align: center;
+    position: relative;
+    z-index: 1; /* Asegura que esté por encima del fondo animado */
+    width: 100%;
+    max-width: 400px; /* Tamaño fijo para el login box */
+    animation: fade-in 1s ease-out; /* Animación de entrada para la caja de login */
+}
+
+/* Animación de entrada para el logo SVG */
+#main-logo-login {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 20px;
+    animation: logo-reveal 1.5s ease-out forwards;
+    transform: scale(0.8); /* Inicia más pequeño */
+    opacity: 0;
+}
+
+@keyframes logo-reveal {
+    0% { transform: scale(0.5) rotate(-30deg); opacity: 0; }
+    60% { transform: scale(1.1) rotate(5deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+#main-logo-login .security-shield {
+    transform-origin: center;
+    animation: shield-draw 1.5s ease-out forwards;
+}
+
+@keyframes shield-draw {
+    0% { transform: scaleY(0); }
+    100% { transform: scaleY(1); }
+}
+
+#main-logo-login .vv-letters {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: letters-fade-in-up 1s ease-out forwards 0.8s; /* Aparecen después del escudo */
+}
+
+#main-logo-login .check-mark {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: dash-draw 1s ease-out forwards 1.2s; /* Aparece al final */
+}
+
+@keyframes letters-fade-in-up {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dash-draw {
+    0% { stroke-dashoffset: 1000; }
+    100% { stroke-dashoffset: 0; }
+}
+
+.login-box h2 {
+    color: var(--text-color-light);
+    margin-bottom: 30px;
+    font-weight: 500;
+    font-size: 1.8em;
+}
+
+.login-box .highlight {
+    background: -webkit-linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    background-clip: text; /* ¡Añade esta línea! */
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+}
+
+.form-group {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.5);
+    transition: color var(--transition-speed) ease;
+}
+
+.input-wrapper input {
+    width: calc(100% - 60px); /* Ajusta para el padding del icono y el padding derecho */
+    padding: 12px 15px 12px 45px; /* Más padding a la izquierda para el icono */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.08); /* Fondo más transparente */
+    color: var(--text-color-light);
+    font-size: 1em;
+    transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    outline: none; /* Elimina el contorno por defecto */
+}
+
+.input-wrapper input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.input-wrapper input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3); /* Sombra de enfoque con color primario */
+}
+
+/* Animación de icono al enfocar input */
+.input-wrapper input:focus + .input-icon {
+    color: var(--primary-color);
+    transform: translateY(-50%) scale(1.1); /* Ligeramente más grande */
+}
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: all var(--transition-speed) ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden; /* Para el efecto de brillo */
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Efecto de brillo en hover para botones */
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3); /* Un brillo blanco */
+    transform: skewX(-30deg);
+    transition: all 0.7s ease;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px) scale(1.02); /* Ligeramente elevado y escalado */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(1px); /* Efecto de click */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.error-message {
+    color: #ff6b6b; /* Rojo suave para errores */
+    margin-top: 15px;
+    font-size: 0.9em;
+    height: 1.2em; /* Mantener espacio para el mensaje */
+    overflow: hidden;
+    animation: slide-in-down 0.5s ease-out; /* Animación para el mensaje de error */
+}
+
+@keyframes slide-in-down {
+    0% { transform: translateY(-20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+/* --- Animaciones Generales --- */
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes pop {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+.animate-fade-in {
+    animation: fade-in 1s ease-out forwards;
+}
+
+.animate-fade-in.delay-1s {
+    animation-delay: 1s;
+}
+
+.animate-pop {
+    animation: pop 0.6s ease-out forwards;
+    animation-delay: 1.5s; /* Aparece después del título y campos */
+}
+
+/* --- App Content (para la transición) --- */
+.app-container {
+    display: none; /* Se oculta por JS */
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+    flex-direction: column; /* Asegura que la app use flexbox */
+    min-height: 100vh;
+    width: 100%;
+}
+
+.app-container.fade-in {
+    opacity: 1;
+    display: flex; /* Mostrar cuando se aplica la clase fade-in */
+}
+
+.app-container.fade-out {
+    opacity: 0;
+}
+
+/* Estilos para el resto de la aplicación (no relacionados directamente con el login, pero para que se vea bien) */
+.app-header {
+    background-color: var(--background-dark);
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#main-logo-home {
+    width: 40px;
+    height: 40px;
+}
+
+/* Estas clases SVG deben estar dentro del SVG directamente */
+/* #main-logo-home .security-shield-home { fill: url(#vv-gradient-home); } */
+/* #main-logo-home .vv-letters-home { fill: #fff; } */
+/* #main-logo-home .check-mark-home { stroke: #fff; } */
+
+.app-header h1 {
+    margin: 0;
+    font-size: 1.5em;
+    color: var(--text-color-light);
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Alinea al inicio si el contenido es menor */
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: var(--border-radius-main);
+    padding: 30px;
+    box-shadow: var(--shadow-light);
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card h2 {
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.section-icon {
+    font-size: 1em;
+    color: var(--secondary-color);
+}
+
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+.btn-secondary:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+.btn-success:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    color: white;
+}
+.btn-info:hover {
+    background-color: #138496;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+.btn-danger:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+}
+
+.pdf-management-area {
+    margin-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+    text-align: left;
+}
+
+.pdf-management-area h3 {
+    color: var(--secondary-color);
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.pdf-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pdf-list-item {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 10px 15px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.pdf-list-item.animate-slide-in {
+    animation: slide-in-up 0.5s forwards;
+}
+
+@keyframes slide-in-up {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pdf-list-item:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+}
+
+.pdf-list-item a {
+    color: var(--text-color-light);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+}
+
+.pdf-list-item a i {
+    color: #FF6347; /* Un color distintivo para el icono PDF */
+    font-size: 1.2em;
+}
+
+.pdf-list-item .file-name {
+    font-weight: 500;
+    word-break: break-all; /* Romper palabras largas si es necesario */
+}
+
+.item-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    font-size: 1.1em;
+    padding: 5px;
+    border-radius: 5px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-icon:hover {
+    color: var(--primary-color);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.no-pdfs-message {
+    color: rgba(255, 255, 255, 0.7);
+    font-style: italic;
+    margin-top: 20px;
+    animation: fade-in 0.8s ease-out forwards;
+}
+
+.app-footer {
+    background-color: #1a1a2e;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: center;
+    padding: 15px;
+    font-size: 0.9em;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Transiciones de pantalla (login <-> app) */
+.login-screen.fade-out {
+    animation: fade-out 0.5s forwards;
+}
+.app-container.fade-in { /* Cambié app-content a app-container para consistencia */
+    animation: fade-in 0.5s forwards;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Nueva animación para fade-out */
+.fade-out {
+    animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Estilos para el contenedor del toast */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end; /* Para que los toasts se apilen desde la derecha */
+}
+
+.toast {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 0; /* Empieza oculto */
+    transform: translateY(-20px); /* Empieza un poco arriba */
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out; /* Animación de entrada */
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Clases de color para diferentes tipos de toast */
+.toast-info { background-color: #2196F3; } /* Azul */
+.toast-success { background-color: #4CAF50; } /* Verde */
+.toast-danger { background-color: #F44336; } /* Rojo */
+.toast-warning { background-color: #FFC107; color: #333;} /* Amarillo */
+
+.toast i {
+    font-size: 1.2em;
+}
+
+/* Animaciones para la lista de PDFs */
+.list-fade-in {
+    animation: listFadeIn 0.5s ease-out forwards;
+}
+
+@keyframes listFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pdf-list-item.animate-slide-in {
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: slideIn 0.4s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}

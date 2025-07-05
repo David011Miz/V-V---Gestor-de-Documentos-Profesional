@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V&V - Gestor de Documentos Profesional</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="toast-container"></div>
+
+    <div id="login-screen" class="login-screen">
+        <div class="login-background-animation"></div> <div class="login-box">
+            <svg id="main-logo-login" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="vv-gradient-login" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#4CAF50" class="vv-gradient-start" />
+                        <stop offset="100%" stop-color="#2196F3" class="vv-gradient-end" />
+                    </linearGradient>
+                    <linearGradient id="vv-gradient-hover-login" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#388E3C" class="vv-gradient-hover-start" />
+                        <stop offset="100%" stop-color="#1976D2" class="vv-gradient-hover-end" />
+                    </linearGradient>
+                </defs>
+                <g transform="translate(100, 100)">
+                    <path class="security-shield" d="M 0 -80 L 70 -40 L 70 40 L 0 80 L -70 40 L -70 -40 Z" fill="url(#vv-gradient-login)"/>
+                    <text class="vv-letters vv-letter-v1" x="-50" y="15" font-size="65" text-anchor="middle" fill="#fff">V</text>
+                    <text class="vv-letters vv-letter-v2" x="50" y="15" font-size="65" text-anchor="middle" fill="#fff">V</text>
+                    <path class="check-mark" d="M -15 25 L -5 35 L 15 15" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                </g>
+            </svg>
+            <h2 class="animate-fade-in">Gestor de Documentos <span class="highlight">V&V</span></h2>
+            <form id="login-form" class="animate-fade-in delay-1s">
+                <div class="form-group">
+                    <label for="login-password">Contraseña:</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="login-password" name="password" placeholder="Ingresa tu contraseña" required autocomplete="current-password">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary animate-pop">Acceder</button>
+                <p id="login-error-message" class="error-message"></p>
+            </form>
+        </div>
+    </div>
+
+    <div class="app-container" id="app-content">
+        <header class="app-header">
+            <div class="header-left">
+                <svg id="main-logo-home" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width: 40px; height: 40px;">
+                    <defs>
+                        <linearGradient id="vv-gradient-home" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#4CAF50" />
+                            <stop offset="100%" stop-color="#2196F3" />
+                        </linearGradient>
+                    </defs>
+                    <g transform="translate(100, 100)">
+                        <path class="security-shield-home" d="M 0 -80 L 70 -40 L 70 40 L 0 80 L -70 40 L -70 -40 Z" fill="url(#vv-gradient-home)"/>
+                        <text class="vv-letters-home" x="-50" y="15" font-size="65" text-anchor="middle" fill="#fff">V</text>
+                        <text class="vv-letters-home" x="50" y="15" font-size="65" text-anchor="middle" fill="#fff">V</text>
+                        <path class="check-mark-home" d="M -15 25 L -5 35 L 15 15" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </g>
+                </svg>
+                <h1>Gestor V&V</h1>
+            </div>
+            <button id="logout-btn" class="btn btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</button>
+        </header>
+
+        <main class="main-content">
+            <section id="instrumentos" class="card">
+                <h2><i class="fa-solid fa-file-signature section-icon"></i> Gestión de Instrumentos Notariales</h2>
+
+                <input type="file" id="pdf-upload-input" accept="application/pdf" style="display: none;">
+
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-primary" data-action="nuevo"><i class="fa-solid fa-plus"></i> Nuevo</button>
+                    <button type="button" class="btn btn-secondary" data-action="buscar"><i class="fa-solid fa-search"></i> Buscar</button>
+                    <button type="button" class="btn btn-success" data-action="guardar"><i class="fa-solid fa-save"></i> Guardar</button>
+                    <button type="button" class="btn btn-info" data-action="ver-todos"><i class="fa-solid fa-list-ul"></i> Ver Todos</button>
+                    <button type="button" class="btn btn-danger" data-action="eliminar-todo"><i class="fa-solid fa-trash-can"></i> Eliminar Todo</button>
+                </div>
+
+                <div class="pdf-management-area" id="pdf-management-area">
+                    <h3>Documentos Recientes</h3>
+                    <div id="pdf-list-container" class="list-fade-in"></div>
+                </div>
+            </section>
+        </main>
+        <footer class="app-footer">
+            <p>&copy; 2025 V&V. Todos los derechos reservados.</p>
+        </footer>
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const API_URL = 'http://localhost:3000/api';
+
+    const loginScreen = document.getElementById('login-screen');
+    const appContent = document.getElementById('app-content');
+    const loginForm = document.getElementById('login-form');
+    const pdfUploadInput = document.getElementById('pdf-upload-input');
+    const pdfListContainer = document.getElementById('pdf-list-container');
+    const mainContent = document.querySelector('.main-content');
+    const pdfManagementArea = document.getElementById('pdf-management-area');
+    const logoutBtn = document.getElementById('logout-btn');
+    let archivoSeleccionado = null;
+    let autoHideTimer = null; // Variable para almacenar el temporizador
+
+    // --- LÓGICA DE LOGIN SEGURA ---
+    loginForm.addEventListener('submit', async function(event) {
+        event.preventDefault(); // Evita la recarga por el submit del formulario
+        const passwordInput = document.getElementById('login-password');
+        const loginErrorMessage = document.getElementById('login-error-message');
+        loginErrorMessage.textContent = ''; // Limpiar mensaje de error previo
+
+        try {
+            const response = await fetch(`${API_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: passwordInput.value })
+            });
+
+            if (response.ok) {
+                loginScreen.classList.add('fade-out'); // Iniciar animación de salida
+                setTimeout(() => {
+                    loginScreen.style.display = 'none';
+                    appContent.style.display = 'flex'; // Usar flex para el layout de la app
+                    appContent.classList.add('fade-in'); // Animación de entrada de la app
+                    // Aquí no mostramos pdfManagementArea por defecto, solo cuando se busque o vea todos.
+                    pdfManagementArea.style.display = 'none'; // Asegúrate de que esté oculto al inicio
+                    showToast('Login exitoso. Bienvenido.', 'success');
+                }, 500); // Coincide con la duración de la animación fade-out
+            } else {
+                const errorData = await response.json();
+                loginErrorMessage.textContent = errorData.message || 'Contraseña incorrecta.';
+                passwordInput.value = ''; // Limpiar campo de contraseña
+                passwordInput.focus(); // Poner el foco de nuevo en el campo
+                showToast('Contraseña incorrecta. Inténtalo de nuevo.', 'danger');
+            }
+        } catch (error) {
+            loginErrorMessage.textContent = 'No se pudo conectar con el servidor.';
+            showToast('No se pudo conectar con el servidor.', 'danger');
+        }
+    });
+
+    // --- LÓGICA DE LOGOUT ---
+    logoutBtn.addEventListener('click', () => {
+        appContent.classList.remove('fade-in');
+        appContent.classList.add('fade-out');
+        clearTimeout(autoHideTimer); // Limpiar cualquier temporizador activo
+        setTimeout(() => {
+            appContent.style.display = 'none';
+            loginScreen.style.display = 'flex'; // Volver a mostrar la pantalla de login
+            loginScreen.classList.remove('fade-out'); // Quitar clase de fade-out si estaba
+            loginScreen.classList.add('fade-in'); // Animación de entrada para el login
+            document.getElementById('login-password').value = ''; // Limpiar contraseña
+            showToast('Sesión cerrada correctamente.', 'info');
+            pdfManagementArea.style.display = 'none'; // Ocultar el área de gestión al cerrar sesión
+            pdfListContainer.innerHTML = ''; // Limpiar lista al cerrar sesión
+        }, 500); // Coincide con la duración de la animación fade-out
+    });
+
+    // Función para mostrar Toasts (notificaciones)
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        let iconClass = 'fa-solid fa-circle-info'; // Icono por defecto
+        if (type === 'success') iconClass = 'fa-solid fa-check-circle';
+        if (type === 'danger') iconClass = 'fa-solid fa-times-circle';
+        if (type === 'warning') iconClass = 'fa-solid fa-exclamation-triangle';
+        toast.innerHTML = `<i class="${iconClass}"></i> <p>${message}</p>`;
+        container.appendChild(toast);
+
+        // Mostrar toast con animación
+        setTimeout(() => toast.classList.add('show'), 100);
+
+        // Ocultar y eliminar toast después de 4 segundos
+        setTimeout(() => {
+            toast.classList.remove('show');
+            // Esperar a que termine la transición antes de eliminar el elemento
+            toast.addEventListener('transitionend', () => toast.remove());
+        }, 4000);
+    }
+
+    // Manejo de la selección de archivo PDF
+    pdfUploadInput.addEventListener('change', event => {
+        const file = event.target.files[0];
+        if (file && file.type === 'application/pdf') {
+            archivoSeleccionado = file;
+            showToast(`Archivo "${file.name}" seleccionado y listo para guardar.`, 'info');
+        } else {
+            archivoSeleccionado = null;
+            showToast('Por favor, selecciona un archivo PDF válido.', 'danger');
+            pdfUploadInput.value = ''; // Limpiar el input si el archivo no es válido
+        }
+    });
+
+    // Función para iniciar el temporizador de auto-ocultado
+    function startAutoHideTimer() {
+        clearTimeout(autoHideTimer); // Limpiar cualquier temporizador existente
+        autoHideTimer = setTimeout(() => {
+            pdfManagementArea.classList.add('fade-out'); // Iniciar animación de salida
+            setTimeout(() => {
+                pdfManagementArea.style.display = 'none';
+                pdfListContainer.innerHTML = ''; // Limpiar la lista de PDFs
+                pdfManagementArea.classList.remove('fade-out'); // Preparar para la próxima vez
+            }, 500); // Coincide con la duración de la animación fade-out
+            showToast('Lista de documentos ocultada automáticamente.', 'info');
+        }, 5 * 60 * 1000); // 5 minutos en milisegundos
+    }
+
+    // Renderizar la lista de PDFs (con o sin término de búsqueda)
+    async function renderPdfList(searchTerm = '') {
+        let url = `${API_URL}/documentos`;
+        if (searchTerm) {
+            url = `${API_URL}/search/${searchTerm}`;
+        }
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: 'Error desconocido.' }));
+                throw new Error(errorData.message || 'Error al conectar con el servidor.');
+            }
+            const data = await response.json();
+            const documents = data.documents;
+
+            pdfListContainer.innerHTML = ''; // Limpiar lista existente
+            clearTimeout(autoHideTimer); // Limpiar temporizador si se está actualizando la lista
+
+            if (documents.length === 0) {
+                const noPdfsMessage = searchTerm ?
+                    `No se encontraron documentos con el término "${searchTerm}".` :
+                    'No hay instrumentos guardados. ¡Sube el primero!';
+                pdfListContainer.innerHTML = `<p class="no-pdfs-message animate-fade-in">${noPdfsMessage}</p>`;
+            } else {
+                documents.forEach((doc, index) => {
+                    const listItem = document.createElement('div');
+                    listItem.className = 'pdf-list-item animate-slide-in';
+                    listItem.style.animationDelay = `${index * 0.05}s`; // Pequeño retraso para efecto escalonado
+                    const fileUrl = `http://localhost:3000${doc.filepath}`; // Asegúrate de que esta URL sea correcta para tu servidor
+                    listItem.innerHTML = `
+                        <a href="${fileUrl}" target="_blank" title="Haz clic para ver el PDF">
+                            <i class="fa-solid fa-file-pdf"></i> <span class="file-name">${doc.filename}</span>
+                        </a>
+                        <div class="item-actions">
+                            <button type="button" class="btn-icon view-pdf-btn" data-fileurl="${fileUrl}" title="Ver PDF">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button type="button" class="btn-icon delete-pdf-btn" data-filename="${doc.filename}" title="Eliminar PDF">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>`;
+                    pdfListContainer.appendChild(listItem);
+                });
+                startAutoHideTimer(); // Iniciar el temporizador después de renderizar
+            }
+            pdfManagementArea.style.display = 'block'; // Asegurarse de que el área de gestión sea visible
+            pdfManagementArea.classList.remove('fade-out'); // Asegurarse de que no esté en estado fade-out
+            pdfManagementArea.classList.add('fade-in'); // Añadir animación de entrada
+        } catch (error) {
+            showToast(error.message, 'danger');
+            pdfListContainer.innerHTML = `<p class="no-pdfs-message animate-fade-in">Error al cargar los documentos: ${error.message}</p>`;
+            pdfManagementArea.style.display = 'block'; // Asegurarse de que el área de gestión sea visible incluso con error
+            pdfManagementArea.classList.remove('fade-out');
+            pdfManagementArea.classList.add('fade-in');
+        }
+    }
+
+    // Manejador de eventos para los botones de acción y eliminación
+    mainContent.addEventListener('click', async function(event) {
+        // Manejar clics en botones de eliminar PDF
+        const deleteButton = event.target.closest('.delete-pdf-btn');
+        if (deleteButton) {
+            event.preventDefault();
+            const fileName = deleteButton.dataset.filename;
+            if (confirm(`¿Estás seguro de que deseas eliminar "${fileName}"?`)) {
+                try {
+                    const response = await fetch(`${API_URL}/documentos/${fileName}`, { method: 'DELETE' });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.error);
+                    showToast(result.message || 'Archivo eliminado correctamente.', 'danger');
+                    await renderPdfList(); // Volver a cargar la lista para reflejar el cambio
+                } catch (error) {
+                    showToast(`Error al eliminar el archivo: ${error.message}`, 'danger');
+                }
+            }
+            return;
+        }
+
+        // Manejar clics en botones de acción principales
+        const actionButton = event.target.closest('.btn');
+        if (!actionButton) return;
+
+        event.preventDefault();
+        const action = actionButton.dataset.action;
+
+        switch (action) {
+            case 'nuevo':
+                pdfUploadInput.click();
+                clearTimeout(autoHideTimer); // Limpiar temporizador si se va a subir un nuevo archivo
+                pdfManagementArea.style.display = 'none'; // Ocultar la lista al seleccionar 'Nuevo'
+                pdfListContainer.innerHTML = ''; // Limpiar la lista visualmente
+                break;
+            case 'guardar':
+                if (!archivoSeleccionado) {
+                    showToast('Primero selecciona un archivo con el botón "Nuevo".', 'warning');
+                    return;
+                }
+                const formData = new FormData();
+                formData.append('pdfFile', archivoSeleccionado);
+                try {
+                    const response = await fetch(`${API_URL}/upload`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+
+                    if (response.status === 409) {
+                        showToast(result.message, 'info');
+                    } else if (!response.ok) {
+                        throw new Error(result.error || 'Error al subir archivo.');
+                    } else {
+                        showToast(result.message || 'Archivo guardado correctamente.', 'success');
+                    }
+                    archivoSeleccionado = null;
+                    pdfUploadInput.value = '';
+                    pdfManagementArea.style.display = 'none'; // Ocultar al guardar, se mostrará solo al buscar/ver todos
+                    pdfListContainer.innerHTML = ''; // Limpiar la lista visualmente
+                    clearTimeout(autoHideTimer); // Limpiar temporizador después de guardar
+                } catch (error) {
+                    showToast(`Error al guardar: ${error.message}`, 'danger');
+                }
+                break;
+            case 'buscar':
+                const searchTerm = prompt('Ingresa el nombre del archivo PDF a buscar:');
+                if (searchTerm === null) {
+                    pdfManagementArea.style.display = 'none'; // Ocultar si se cancela la búsqueda
+                    pdfListContainer.innerHTML = ''; // Limpiar la lista visualmente
+                    return;
+                }
+
+                if (searchTerm.trim() === '') {
+                    showToast('No se ingresó un término de búsqueda. No se mostrarán documentos.', 'info');
+                    pdfManagementArea.style.display = 'none'; // Ocultar si no hay término de búsqueda
+                    pdfListContainer.innerHTML = ''; // Limpiar la lista visualmente
+                } else {
+                    showToast(`Buscando "${searchTerm.trim()}"...`, 'info');
+                    await renderPdfList(searchTerm.trim());
+                }
+                break;
+            case 'eliminar-todo':
+                if (confirm('¿ESTÁS SEGURO DE ELIMINAR TODOS LOS DOCUMENTOS? \n\n¡Esta acción es irreversible!')) {
+                    try {
+                        const response = await fetch(`${API_URL}/documentos`, { method: 'DELETE' });
+                        const result = await response.json();
+                        if (!response.ok) throw new Error(result.error);
+                        showToast(result.message || 'Todos los archivos han sido eliminados.', 'danger');
+                        pdfManagementArea.style.display = 'block'; // Mostrar el área para el mensaje de "no hay instrumentos"
+                        pdfListContainer.innerHTML = `<p class="no-pdfs-message animate-fade-in">No hay instrumentos guardados. ¡Sube el primero!</p>`;
+                        clearTimeout(autoHideTimer); // Limpiar temporizador después de eliminar todo
+                        startAutoHideTimer(); // Iniciar temporizador para el mensaje de no documentos
+                    } catch (error) {
+                        showToast(`Error al limpiar la base de datos: ${error.message}`, 'danger');
+                    }
+                }
+                break;
+            case 'ver-todos':
+                showToast('Mostrando todos los documentos.', 'info');
+                await renderPdfList();
+                break;
+        }
+    });
+
+    // Inicializar la vista al cargar la página
+    loginScreen.style.display = 'flex';
+    appContent.style.display = 'none';
+    pdfManagementArea.style.display = 'none'; // Asegurarse de que el área de gestión esté oculta inicialmente
+});
+    </script>
+</body>
+</html>
